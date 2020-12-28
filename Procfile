@@ -1,1 +1,1 @@
-web: npm sing me a lullaby
+web: npm run start-prod
