@@ -31,7 +31,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.33.0
+        uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
         env:
           HAS_SKIP: ${{ contains(toJson(join(github.event.commits.*.message)), '#skip') }} 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,3 +49,11 @@ jobs:
           healthcheck: "https://pokedexeu.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+      - name: notify
+        uses: 8398a7/action-slack@v3
+          if: ${{ success() || failure() }}
+          with:
+            status: ${{ job.status }}
+            fields: repo,commit,action,eventName,job,took
+          env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
