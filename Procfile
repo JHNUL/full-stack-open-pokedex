@@ -1,1 +1,1 @@
-web: npm run a marathon
+web: npm run start-prod
