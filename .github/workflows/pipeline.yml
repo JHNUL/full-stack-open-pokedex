@@ -35,15 +35,13 @@ jobs:
           COMMIT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
         run: echo "$COMMIT_MESSAGES"
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' }}
-        if: ${{ contains(COMMIT_MESSAGES, '#skip') == false }}
+        if: ${{ github.event_name == 'push' && contains($COMMIT_MESSAGES, '#skip') == false}}
         uses: anothrNick/github-tag-action@1.33.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
       - name: deploy
-        if: ${{ github.event_name == 'push' }}
-        if: ${{ contains($COMMIT_MESSAGES, '#skip') == false }}
+        if: ${{ github.event_name == 'push' && contains($COMMIT_MESSAGES, '#skip') == false }}
         uses: akhileshns/heroku-deploy@v3.8.8
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
