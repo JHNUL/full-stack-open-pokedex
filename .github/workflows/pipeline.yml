@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: commit messages
-        run: echo $COMMIT_MESSAGES
+        run: echo it does do contain i solemnly swear $COMMIT_MESSAGES
         env:
-          COMMIT_MESSAGES: ${{ join(github.event.commits.*.message) }}
+          COMMIT_MESSAGES: ${{ contains(join(github.event.commits.*.message), '#skip') }}
       # - uses: actions/checkout@v2
       # - uses: actions/setup-node@v1
       #   with:
