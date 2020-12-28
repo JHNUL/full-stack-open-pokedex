@@ -36,12 +36,12 @@ jobs:
           HAS_SKIP: ${{ contains(toJson(join(github.event.commits.*.message)), '#skip') }} 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
-        if: ${{ github.event_name == 'push' && env.HAS_SKIP == true }}
+        if: ${{ github.event_name == 'push' && env.HAS_SKIP == false }}
       - name: deploy
         uses: akhileshns/heroku-deploy@v3.8.8
         env:
           HAS_SKIP: ${{ contains(toJson(join(github.event.commits.*.message)), '#skip') }} 
-        if: ${{ github.event_name == 'push' && env.HAS_SKIP == true }}
+        if: ${{ github.event_name == 'push' && env.HAS_SKIP == false }}
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: pokedexeu
@@ -49,11 +49,11 @@ jobs:
           healthcheck: "https://pokedexeu.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
-      - name: notify
-        uses: 8398a7/action-slack@v3
-        if: ${{ job.status == 'success' || job.status == 'failure' }}
-        with:
-          status: ${{ job.status }}
-          fields: repo,commit,action,eventName,job,took
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # - name: notify
+      #   uses: 8398a7/action-slack@v3
+      #   if: ${{ job.status == 'success' || job.status == 'failure' }}
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,commit,action,eventName,job,took
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
