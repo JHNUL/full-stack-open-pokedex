@@ -11,48 +11,43 @@ on:
 jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-18.04
+    env:
+      SKIP: ${{ join(github.event.commits.*.message) }}
     steps:
-      - name: commit messages
-        run: echo it does do contain i solemnly swear $COMMIT_MESSAGES
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: npm install
+        run: npm install
+      - name: lint
+        run: npm run eslint
+      - name: build
+        run: npm run build
+      - name: test
+        run: npm run test
+      - name: e2e tests
+        uses: cypress-io/github-action@v2
+        with:
+          command: npm run test:e2e
+          start: npm run start-prod
+          wait-on: http://localhost:5000
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
         env:
-          COMMIT_MESSAGES: ${{ contains(join(github.event.commits.*.message), '#skip') }}
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v1
-      #   with:
-      #     node-version: '12.x'
-      # - name: npm install
-      #   run: npm install
-      # - name: lint
-      #   run: npm run eslint
-      # - name: build
-      #   run: npm run build
-      # - name: test
-      #   run: npm run test
-      # - name: e2e tests
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     command: npm run test:e2e
-      #     start: npm run start-prod
-      #     wait-on: http://localhost:5000
-      # - name: Bump version and push tag
-      #   uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
-      #   env:
-      #     HAS_SKIP: ${{ contains(toJson(join(github.event.commits.*.message)), '#skip') }} 
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     DEFAULT_BUMP: patch
-      #   if: ${{ github.event_name == 'push' && env.HAS_SKIP == false }}
-      # - name: deploy
-      #   uses: akhileshns/heroku-deploy@v3.8.8
-      #   env:
-      #     HAS_SKIP: ${{ contains(toJson(join(github.event.commits.*.message)), '#skip') }} 
-      #   if: ${{ github.event_name == 'push' && env.HAS_SKIP == false }}
-      #   with:
-      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-      #     heroku_app_name: pokedexeu
-      #     heroku_email: juhani.riisio@gmail.com
-      #     healthcheck: "https://pokedexeu.herokuapp.com/health"
-      #     checkstring: "ok"
-      #     rollbackonhealthcheckfailed: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+        if: ${{ github.event_name == 'push' && contains('$SKIP', '#skip') == false }}
+      - name: deploy
+        uses: akhileshns/heroku-deploy@v3.8.8
+        if: ${{ github.event_name == 'push' && contains('$SKIP', '#skip') == false }}
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: pokedexeu
+          heroku_email: juhani.riisio@gmail.com
+          healthcheck: "https://pokedexeu.herokuapp.com/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
       # - name: notify # enough with this
       #   uses: 8398a7/action-slack@v3
       #   if: ${{ job.status == 'success' || job.status == 'failure' }}

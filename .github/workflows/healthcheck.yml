@@ -4,11 +4,6 @@ on:
   schedule:
     - cron: '* * * * *'
 
-# on:
-#   push:
-#     branches:
-#       - master
-
 jobs:
   periodic_health_check:
     runs-on: ubuntu-18.04
