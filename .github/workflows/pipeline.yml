@@ -51,9 +51,9 @@ jobs:
           rollbackonhealthcheckfailed: true
       - name: notify
         uses: 8398a7/action-slack@v3
-          if: ${{ job.status == 'success' || job.status == 'failure' }}
-          with:
-            status: ${{ job.status }}
-            fields: repo,commit,action,eventName,job,took
-          env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: ${{ job.status == 'success' || job.status == 'failure' }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,action,eventName,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
