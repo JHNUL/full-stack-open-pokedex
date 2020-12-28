@@ -51,7 +51,7 @@ jobs:
           rollbackonhealthcheckfailed: true
       - name: notify
         uses: 8398a7/action-slack@v3
-          if: ${{ success() || failure() }}
+          if: ${{ job.status == 'success' || job.status == 'failure' }}
           with:
             status: ${{ job.status }}
             fields: repo,commit,action,eventName,job,took
