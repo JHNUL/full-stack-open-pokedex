@@ -1,0 +1,7 @@
+Language: Java
+
+1) Code quality and style enforcement can be done with e.g. SonarQube, which integrates to several Continuous Integration/Deployment pipelines and is available as a plugin to popular IDE's. Test runs can be started using Maven, where a distinct step in the lifecycle is called a phase. Maven has a rich ecosystem of plugins with which various tasks can be accomplished. For example tests can be divided into fast-running and slow-running ones. Tests can then be separated to be run on different servers based on the tested layer (unit/integeration/E2E) simultaneously to reduce overall build time. Maven is also used to compile the binary (war/jar) that will be published at the end of the pipeline.
+
+2) Other alternatives to continuous integration besides Jenkins and GitHub Actions are for example Travis and Azure DevOps. At least Azure offers cloud-hosted pipelines which are similar in principle to GH actions in that they use some declarative way to define the steps in the pipeline and then all the resources to setup the actual build nodes and such are handled under the hood.
+
+3) The setup described in part 1 would certainly be better in a self-hosted environment with the involved nature of setting up several machines to handle different layers of testing simultaneously. On the other hand if the project was simpler with, say, only unit tests, it would reduce the configuration overhead significantly to use a cloud-based pipeline.
